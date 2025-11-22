@@ -3,54 +3,39 @@ name = "marvel-characters"
 description = "Marvel characters project"
 requires-python = ">=3.12, <3.13"
 dependencies = [
-    "cffi==1.17.1",
-    "cloudpickle==3.1.1",
-    "databricks-sdk==0.55.0",
-    "lightgbm==4.6.0",
-    "loguru==0.7.3",
-    "mlflow==3.1.1",
-    "numpy==1.26.4",
-    "pandas==2.3.0",
-    "pyarrow==17.0.0",
-    "pydantic==2.11.7",
-    "python-dotenv==1.1.1",
-    "scikit-learn==1.7.0",
-    "scipy==1.16.0",
+    "cffi>=2.0.0",
+    "cloudpickle>=3.1.1",
+    "databricks-sdk>=0.55.0",
+    "lightgbm>=4.6.0",
+    "loguru>=0.7.3",
+    "mlflow>=3.1.1",
+    "numpy>=1.26.4",
+    "pandas>=2.3.0",
+    "pyarrow>=17.0.0",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
+    "scikit-learn>=1.7.0",
+    "scipy>=1.16.0",
 ]
 
 dynamic = [
     'version',
 ]
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
-    "databricks-connect>=16.0,<17",
-    "ipykernel>=6.29.5,<7",
+    "databricks-connect>=17.3.1",
+    "ipykernel>=7.1.0",
     "pip>=25.0.1,<26",
-    "pre-commit>=4.1.0,<5",
+    "pre-commit>=4.4.0",
     "prek>=0.2.18",
 ]
 
 test = [
-    "pre-commit>=4.1.0,<5",
-    "pyspark>=3.4.0,<4",
-    "pytest-cov>=5.0.0,<6",
-    "pytest>=8.0.0,<9",
-]
-
-[project.optional-dependencies]
-dev = [
-    "databricks-connect>=16.0,<17",
-    "ipykernel>=6.29.5,<7",
-    "pip>=25.0.1,<26",
-    "pre-commit>=4.1.0,<5",
-]
-
-test = [
-    "pre-commit>=4.1.0,<5",
-    "pyspark>=3.4.0,<4",
-    "pytest-cov>=5.0.0,<6",
-    "pytest>=8.0.0,<9",
+    "pre-commit>=4.4.0",
+    "pyspark>=4.0.1",
+    "pytest-cov>=7.0.0",
+    "pytest>=9.0.1",
 ]
 
 [build-system]
