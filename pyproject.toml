@@ -88,7 +88,7 @@ addopts = [
 ]
 
 [tool.ruff]
-line-length = 120
+line-length = 80
 lint.select = [
     "ANN", # flake8-annotations rules
     "B",   # flake8-bugbear rules
