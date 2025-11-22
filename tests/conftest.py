@@ -34,7 +34,13 @@ def spark_session() -> SparkSession | MagicMock:
 def mock_project_config() -> MagicMock:
     """Create a mock ProjectConfig for testing."""
     config = MagicMock(spec=ProjectConfig)
-    config.cat_features = ["Universe", "Origin", "Identity", "Gender", "Marital_Status"]
+    config.cat_features = [
+        "Universe",
+        "Origin",
+        "Identity",
+        "Gender",
+        "Marital_Status",
+    ]
     config.num_features = ["Height", "Weight", "Teams", "Magic", "Mutant"]
     config.target = "Alive"
     config.catalog_name = "test_catalog"

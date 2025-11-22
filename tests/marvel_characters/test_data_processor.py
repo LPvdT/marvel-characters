@@ -13,7 +13,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 # Import project modules after path setup
 from marvel_characters.config import ProjectConfig  # noqa: E402
-from marvel_characters.data_processor import DataProcessor, generate_synthetic_data, generate_test_data  # noqa: E402
+from marvel_characters.data_processor import (  # noqa: E402
+    DataProcessor,
+    generate_synthetic_data,
+    generate_test_data,
+)
 
 
 @pytest.fixture
@@ -39,7 +43,13 @@ def sample_data() -> pd.DataFrame:
 def mock_config() -> MagicMock:
     """Create a mock ProjectConfig for testing."""
     config = MagicMock(spec=ProjectConfig)
-    config.cat_features = ["Universe", "Origin", "Identity", "Gender", "Marital_Status"]
+    config.cat_features = [
+        "Universe",
+        "Origin",
+        "Identity",
+        "Gender",
+        "Marital_Status",
+    ]
     config.num_features = ["Height", "Weight", "Teams", "Magic", "Mutant"]
     config.target = "Alive"
     config.catalog_name = "test_catalog"
@@ -60,14 +70,24 @@ def mock_spark() -> MagicMock:
 class TestDataProcessor:
     """Tests for the DataProcessor class."""
 
-    def test_init(self, sample_data: pd.DataFrame, mock_config: MagicMock, mock_spark: MagicMock) -> None:
+    def test_init(
+        self,
+        sample_data: pd.DataFrame,
+        mock_config: MagicMock,
+        mock_spark: MagicMock,
+    ) -> None:
         """Test DataProcessor initialization."""
         processor = DataProcessor(sample_data, mock_config, mock_spark)
         assert processor.df is sample_data
         assert processor.config is mock_config
         assert processor.spark is mock_spark
 
-    def test_preprocess(self, sample_data: pd.DataFrame, mock_config: MagicMock, mock_spark: MagicMock) -> None:
+    def test_preprocess(
+        self,
+        sample_data: pd.DataFrame,
+        mock_config: MagicMock,
+        mock_spark: MagicMock,
+    ) -> None:
         """Test the preprocess method."""
         processor = DataProcessor(sample_data, mock_config, mock_spark)
         processor.preprocess()
@@ -94,19 +114,31 @@ class TestDataProcessor:
         # Check target conversion
         assert set(processor.df["Alive"].unique()) == {0, 1}
 
-    def test_split_data(self, sample_data: pd.DataFrame, mock_config: MagicMock, mock_spark: MagicMock) -> None:
+    def test_split_data(
+        self,
+        sample_data: pd.DataFrame,
+        mock_config: MagicMock,
+        mock_spark: MagicMock,
+    ) -> None:
         """Test the split_data method."""
         processor = DataProcessor(sample_data, mock_config, mock_spark)
         processor.preprocess()
 
-        train_set, test_set = processor.split_data(test_size=0.4, random_state=42)
+        train_set, test_set = processor.split_data(
+            test_size=0.4, random_state=42
+        )
 
         # Check split sizes
         assert len(train_set) + len(test_set) == len(processor.df)
         assert len(train_set) > 0
         assert len(test_set) > 0
 
-    def test_save_to_catalog(self, sample_data: pd.DataFrame, mock_config: MagicMock, mock_spark: MagicMock) -> None:
+    def test_save_to_catalog(
+        self,
+        sample_data: pd.DataFrame,
+        mock_config: MagicMock,
+        mock_spark: MagicMock,
+    ) -> None:
         """Test the save_to_catalog method."""
         # Create a processor instance
         processor = DataProcessor(sample_data, mock_config, mock_spark)
@@ -125,7 +157,11 @@ class TestDataProcessor:
 
     @patch("pyspark.sql.SparkSession.sql")
     def test_enable_change_data_feed(
-        self, mock_sql: MagicMock, sample_data: pd.DataFrame, mock_config: MagicMock, mock_spark: MagicMock
+        self,
+        mock_sql: MagicMock,
+        sample_data: pd.DataFrame,
+        mock_config: MagicMock,
+        mock_spark: MagicMock,
     ) -> None:
         """Test the enable_change_data_feed method."""
         processor = DataProcessor(sample_data, mock_config, mock_spark)
@@ -142,12 +178,21 @@ class TestDataGenerationFunctions:
         """Test the generate_synthetic_data function."""
         # Preprocess the sample data to match expected format
         processor = DataProcessor(
-            sample_data, MagicMock(spec=ProjectConfig, cat_features=[], num_features=[], target="Alive"), MagicMock()
+            sample_data,
+            MagicMock(
+                spec=ProjectConfig,
+                cat_features=[],
+                num_features=[],
+                target="Alive",
+            ),
+            MagicMock(),
         )
         processor.preprocess()
 
         # Generate synthetic data
-        synthetic_data = generate_synthetic_data(processor.df, drift=False, num_rows=10)
+        synthetic_data = generate_synthetic_data(
+            processor.df, drift=False, num_rows=10
+        )
 
         # Check that the synthetic data has the expected number of rows
         assert len(synthetic_data) == 10
@@ -156,14 +201,23 @@ class TestDataGenerationFunctions:
         assert set(synthetic_data.columns) == set(processor.df.columns)
 
         # Test with drift
-        synthetic_data_drift = generate_synthetic_data(processor.df, drift=True, num_rows=10)
+        synthetic_data_drift = generate_synthetic_data(
+            processor.df, drift=True, num_rows=10
+        )
         assert len(synthetic_data_drift) == 10
 
     def test_generate_test_data(self, sample_data: pd.DataFrame) -> None:
         """Test the generate_test_data function."""
         # Preprocess the sample data to match expected format
         processor = DataProcessor(
-            sample_data, MagicMock(spec=ProjectConfig, cat_features=[], num_features=[], target="Alive"), MagicMock()
+            sample_data,
+            MagicMock(
+                spec=ProjectConfig,
+                cat_features=[],
+                num_features=[],
+                target="Alive",
+            ),
+            MagicMock(),
         )
         processor.preprocess()
 

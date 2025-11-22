@@ -11,9 +11,15 @@ from mlflow.utils.environment import _mlflow_conda_env
 from marvel_characters.config import Tags
 
 
-def adjust_predictions(predictions: np.ndarray | list[int]) -> dict[str, list[str]]:
+def adjust_predictions(
+    predictions: np.ndarray | list[int],
+) -> dict[str, list[str]]:
     """Adjust predictions to human-readable format."""
-    return {"Survival prediction": ["alive" if pred == 1 else "dead" for pred in predictions]}
+    return {
+        "Survival prediction": [
+            "alive" if pred == 1 else "dead" for pred in predictions
+        ]
+    }
 
 
 class MarvelModelWrapper(mlflow.pyfunc.PythonModel):
@@ -21,9 +27,15 @@ class MarvelModelWrapper(mlflow.pyfunc.PythonModel):
 
     def load_context(self, context: PythonModelContext) -> None:
         """Load the LightGBM model."""
-        self.model = mlflow.sklearn.load_model(context.artifacts["lightgbm-pipeline"])
+        self.model = mlflow.sklearn.load_model(
+            context.artifacts["lightgbm-pipeline"]
+        )
 
-    def predict(self, context: PythonModelContext, model_input: pd.DataFrame | np.ndarray) -> dict:
+    def predict(
+        self,
+        context: PythonModelContext,
+        model_input: pd.DataFrame | np.ndarray,
+    ) -> dict:
         """Predict the survival of a character."""
         predictions = self.model.predict(model_input)
         return adjust_predictions(predictions)
@@ -47,14 +59,22 @@ class MarvelModelWrapper(mlflow.pyfunc.PythonModel):
         :param input_example: Input example for the model
         """
         mlflow.set_experiment(experiment_name=experiment_name)
-        with mlflow.start_run(run_name=f"wrapper-lightgbm-{datetime.now().strftime('%Y-%m-%d')}", tags=tags.to_dict()):
+        with mlflow.start_run(
+            run_name=f"wrapper-lightgbm-{datetime.now().strftime('%Y-%m-%d')}",
+            tags=tags.to_dict(),
+        ):
             additional_pip_deps = []
             for package in code_paths:
                 whl_name = package.split("/")[-1]
                 additional_pip_deps.append(f"code/{whl_name}")
-            conda_env = _mlflow_conda_env(additional_pip_deps=additional_pip_deps)
+            conda_env = _mlflow_conda_env(
+                additional_pip_deps=additional_pip_deps
+            )
 
-            signature = infer_signature(model_input=input_example, model_output={"Survival prediction": ["alive"]})
+            signature = infer_signature(
+                model_input=input_example,
+                model_output={"Survival prediction": ["alive"]},
+            )
             model_info = mlflow.pyfunc.log_model(
                 python_model=self,
                 name="pyfunc-wrapper",
