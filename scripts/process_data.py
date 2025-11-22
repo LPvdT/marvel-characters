@@ -1,8 +1,9 @@
 import argparse
+
+import pandas as pd
 import yaml
 from loguru import logger
 from pyspark.sql import SparkSession
-import pandas as pd
 
 from marvel_characters.config import ProjectConfig
 from marvel_characters.data_processor import DataProcessor
