@@ -46,48 +46,38 @@ def create_or_refresh_monitoring(
         )
         return
 
-    request_schema = StructType(
-        [
-            StructField(
-                "dataframe_records",
-                ArrayType(
-                    StructType(
-                        [
-                            StructField("Height", DoubleType(), True),
-                            StructField("Weight", DoubleType(), True),
-                            StructField("Universe", StringType(), True),
-                            StructField("Identity", StringType(), True),
-                            StructField("Gender", StringType(), True),
-                            StructField("Marital_Status", StringType(), True),
-                            StructField("Teams", StringType(), True),
-                            StructField("Origin", StringType(), True),
-                            StructField("Magic", StringType(), True),
-                            StructField("Mutant", StringType(), True),
-                        ]
-                    )
-                ),
-                True,
-            )
-        ]
-    )
-
-    response_schema = StructType(
-        [
-            StructField("predictions", ArrayType(IntegerType()), True),
-            StructField(
-                "databricks_output",
-                StructType(
-                    [
-                        StructField("trace", StringType(), True),
-                        StructField(
-                            "databricks_request_id", StringType(), True
-                        ),
-                    ]
-                ),
-                True,
+    request_schema = StructType([
+        StructField(
+            "dataframe_records",
+            ArrayType(
+                StructType([
+                    StructField("Height", DoubleType(), True),
+                    StructField("Weight", DoubleType(), True),
+                    StructField("Universe", StringType(), True),
+                    StructField("Identity", StringType(), True),
+                    StructField("Gender", StringType(), True),
+                    StructField("Marital_Status", StringType(), True),
+                    StructField("Teams", StringType(), True),
+                    StructField("Origin", StringType(), True),
+                    StructField("Magic", StringType(), True),
+                    StructField("Mutant", StringType(), True),
+                ])
             ),
-        ]
-    )
+            True,
+        )
+    ])
+
+    response_schema = StructType([
+        StructField("predictions", ArrayType(IntegerType()), True),
+        StructField(
+            "databricks_output",
+            StructType([
+                StructField("trace", StringType(), True),
+                StructField("databricks_request_id", StringType(), True),
+            ]),
+            True,
+        ),
+    ])
 
     inf_table_parsed = inf_table.withColumn(
         "parsed_request", F.from_json(F.col("request"), request_schema)
