@@ -44,7 +44,8 @@ class DataProcessor:
         counts = self.df["Universe"].value_counts()
         small_universes = counts[counts < 50].index
         self.df["Universe"] = self.df["Universe"].replace(
-            small_universes, "Other"
+            small_universes,  # type: ignore
+            "Other",
         )
 
         # Teams
@@ -74,9 +75,13 @@ class DataProcessor:
             "Widow", "Widowed"
         )
         self.df = self.df[
-            self.df["Marital_Status"].isin(
-                ["Single", "Married", "Widowed", "Engaged", "Unknown"]
-            )
+            self.df["Marital_Status"].isin([
+                "Single",
+                "Married",
+                "Widowed",
+                "Engaged",
+                "Unknown",
+            ])
         ]
 
         # Magic
@@ -137,7 +142,7 @@ class DataProcessor:
         train_set, test_set = train_test_split(
             self.df, test_size=test_size, random_state=random_state
         )
-        return train_set, test_set
+        return train_set, test_set  # type: ignore
 
     def save_to_catalog(
         self, train_set: pd.DataFrame, test_set: pd.DataFrame
@@ -214,7 +219,7 @@ def generate_synthetic_data(
                     df[column].mean(), df[column].std(), num_rows
                 )
 
-        elif pd.api.types.is_categorical_dtype(
+        elif pd.api.types.is_categorical_dtype(  # type: ignore
             df[column]
         ) or pd.api.types.is_object_dtype(df[column]):
             synthetic_data[column] = np.random.choice(
