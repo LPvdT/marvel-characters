@@ -80,13 +80,13 @@ class BasicModel:
             self.spark, f"{self.catalog_name}.{self.schema_name}.train_set"
         )
         self.train_data_version = str(
-            train_delta_table.history().select("version").first()[0]
+            train_delta_table.history().select("version").first()[0]  # type: ignore
         )
         test_delta_table = DeltaTable.forName(
             self.spark, f"{self.catalog_name}.{self.schema_name}.test_set"
         )
         self.test_data_version = str(
-            test_delta_table.history().select("version").first()[0]
+            test_delta_table.history().select("version").first()[0]  # type: ignore
         )
         logger.info("✅ Data successfully loaded.")
 
@@ -112,9 +112,9 @@ class BasicModel:
             def fit(self, X: pd.DataFrame, y: pd.Series | None = None) -> None:
                 """Fit the transformer to the DataFrame X."""
                 self.fit_transform(X)
-                return self
+                return self  # type: ignore
 
-            def fit_transform(
+            def fit_transform(  # type: ignore
                 self, X: pd.DataFrame, y: pd.Series | None = None
             ) -> pd.DataFrame:
                 """Fit and transform the DataFrame X."""
@@ -186,19 +186,19 @@ class BasicModel:
                 model_input=self.X_train,
                 model_output=self.pipeline.predict(self.X_train),
             )
-            train_dataset = mlflow.data.from_spark(
+            train_dataset = mlflow.data.from_spark(  # type: ignore
                 self.train_set_spark,
                 table_name=f"{self.catalog_name}.{self.schema_name}.train_set",
                 version=self.train_data_version,
             )
             mlflow.log_input(train_dataset, context="training")
-            test_dataset = mlflow.data.from_spark(
+            test_dataset = mlflow.data.from_spark(  # type: ignore
                 self.test_set_spark,
                 table_name=f"{self.catalog_name}.{self.schema_name}.test_set",
                 version=self.test_data_version,
             )
             mlflow.log_input(test_dataset, context="testing")
-            self.model_info = mlflow.sklearn.log_model(
+            self.model_info = mlflow.sklearn.log_model(  # type: ignore
                 sk_model=self.pipeline,
                 artifact_path="lightgbm-pipeline-model",
                 signature=signature,
@@ -207,7 +207,7 @@ class BasicModel:
             eval_data = self.X_test.copy()
             eval_data[self.config.target] = self.y_test
 
-            result = mlflow.models.evaluate(
+            result = mlflow.models.evaluate(  # type: ignore
                 self.model_info.model_uri,
                 eval_data,
                 targets=self.config.target,
@@ -228,7 +228,7 @@ class BasicModel:
         )
         latest_model_uri = f"models:/{latest_model_version.model_id}"
 
-        result = mlflow.models.evaluate(
+        result = mlflow.models.evaluate(  # type: ignore
             latest_model_uri,
             self.eval_data,
             targets=self.config.target,
@@ -265,4 +265,4 @@ class BasicModel:
             alias="latest-model",
             version=latest_version,
         )
-        return latest_version
+        return latest_version  # type: ignore
