@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from mlflow import MlflowClient
 from mlflow.models import infer_signature
-from mlflow.pyfunc import PythonModelContext
+from mlflow.pyfunc.model import PythonModel, PythonModelContext
 from mlflow.utils.environment import _mlflow_conda_env
 
 from marvel_characters.config import Tags
@@ -22,22 +22,22 @@ def adjust_predictions(
     }
 
 
-class MarvelModelWrapper(mlflow.pyfunc.PythonModel):
+class MarvelModelWrapper(PythonModel):
     """Wrapper for LightGBM model."""
 
     def load_context(self, context: PythonModelContext) -> None:
         """Load the LightGBM model."""
-        self.model = mlflow.sklearn.load_model(
+        self.model = mlflow.sklearn.load_model(  # type: ignore
             context.artifacts["lightgbm-pipeline"]
         )
 
-    def predict(
+    def predict(  # type: ignore
         self,
         context: PythonModelContext,
         model_input: pd.DataFrame | np.ndarray,
     ) -> dict:
         """Predict the survival of a character."""
-        predictions = self.model.predict(model_input)
+        predictions = self.model.predict(model_input)  # type: ignore
         return adjust_predictions(predictions)
 
     def log_register_model(
@@ -85,7 +85,7 @@ class MarvelModelWrapper(mlflow.pyfunc.PythonModel):
             )
         client = MlflowClient()
         registered_model = mlflow.register_model(
-            model_uri=model_info.model_uri,
+            model_uri=model_info.model_uri,  # type: ignore
             name=pyfunc_model_name,
             tags=tags.to_dict(),
         )
@@ -95,4 +95,4 @@ class MarvelModelWrapper(mlflow.pyfunc.PythonModel):
             alias="latest-model",
             version=latest_version,
         )
-        return latest_version
+        return latest_version  # type: ignore
