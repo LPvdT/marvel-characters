@@ -27,12 +27,17 @@ class ModelServing:
         :return: Latest version of the model as a string
         """
         client = mlflow.MlflowClient()
-        latest_version = client.get_model_version_by_alias(self.model_name, alias="latest-model").version
+        latest_version = client.get_model_version_by_alias(
+            self.model_name, alias="latest-model"
+        ).version
         print(f"Latest model version: {latest_version}")
         return latest_version
 
     def deploy_or_update_serving_endpoint(
-        self, version: str = "latest", workload_size: str = "Small", scale_to_zero: bool = True
+        self,
+        version: str = "latest",
+        workload_size: str = "Small",
+        scale_to_zero: bool = True,
     ) -> None:
         """Deploy or update the model serving endpoint in Databricks for Marvel characters.
 
@@ -40,8 +45,13 @@ class ModelServing:
         :param workload_size: Size of the serving workload (default: "Small")
         :param scale_to_zero: Whether to enable scale-to-zero (default: True)
         """
-        endpoint_exists = any(item.name == self.endpoint_name for item in self.workspace.serving_endpoints.list())
-        entity_version = self.get_latest_model_version() if version == "latest" else version
+        endpoint_exists = any(
+            item.name == self.endpoint_name
+            for item in self.workspace.serving_endpoints.list()
+        )
+        entity_version = (
+            self.get_latest_model_version() if version == "latest" else version
+        )
 
         served_entities = [
             ServedEntityInput(
@@ -60,4 +70,6 @@ class ModelServing:
                 ),
             )
         else:
-            self.workspace.serving_endpoints.update_config(name=self.endpoint_name, served_entities=served_entities)
+            self.workspace.serving_endpoints.update_config(
+                name=self.endpoint_name, served_entities=served_entities
+            )

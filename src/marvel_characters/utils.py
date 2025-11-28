@@ -5,7 +5,7 @@ import os
 from databricks.sdk import WorkspaceClient
 
 
-def is_databricks() -> str:
+def is_databricks() -> bool:
     """Check if the code is running in a Databricks environment."""
     return "DATABRICKS_RUNTIME_VERSION" in os.environ
 
